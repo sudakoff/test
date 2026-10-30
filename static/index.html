@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Semantic TextNavigator — проверка условий договоров поставки</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header>
+  <h1>Semantic TextNavigator <small>— проверка условий договоров поставки (прототип)</small></h1>
+  <div class="controls">
+    <label>Дата проверки <input type="date" id="checkDate" value="2026-03-10"></label>
+    <label class="file">
+      <input type="file" id="files" multiple accept=".txt,text/plain">
+      <span id="fileLabel">Выбрать TXT-файлы…</span>
+    </label>
+    <button id="analyzeBtn" class="primary" disabled>Проанализировать</button>
+    <button id="sampleBtn" title="Прогнать через тот же конвейер файлы из папки documents/">Загрузить примеры из documents/</button>
+    <span id="status" class="status"></span>
+  </div>
+</header>
+
+<main>
+  <section class="left">
+    <div id="empty" class="hint">
+      Загрузите несколько TXT-файлов (договоры, допсоглашения, письма, проекты). Приложение найдёт сумму и срок поставки
+      по каждому договору на дату проверки и покажет точную цитату-основание. Условия меняет только подписанное
+      допсоглашение, вступившее в силу к дате проверки; письма и проекты показываются отдельно.
+    </div>
+
+    <div id="results" hidden>
+      <h2>Договоры на <span id="checkDateLabel"></span></h2>
+      <table id="contracts">
+        <thead>
+          <tr><th>№ договора</th><th>Поставщик</th><th>Сумма</th><th>Срок поставки</th><th>Сведения для проверки</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <p class="legend">
+        <span class="badge ok">значение из документа</span>
+        <span class="badge changed">изменено допсоглашением</span>
+        <span class="badge nodata">нет данных</span>
+        <span class="badge check">требует проверки</span>
+        <span class="badge pending">не согласовано</span>
+      </p>
+
+      <h2>Вопросы</h2>
+      <div class="questions">
+        <div class="preset">
+          <button data-q="field" data-n="STN-101" data-f="delivery_date">Срок поставки по STN-101 на дату проверки</button>
+          <button data-q="field" data-n="STN-102" data-f="amount">Сумма договора STN-102</button>
+          <button data-q="field" data-n="STN-103" data-f="amount">Сумма договора STN-103</button>
+          <button data-q="before" data-d="2026-04-01">Поставка раньше 01.04.2026 и несогласованные изменения срока</button>
+        </div>
+        <div class="custom">
+          <select id="qContract"></select>
+          <select id="qField">
+            <option value="amount">Сумма договора</option>
+            <option value="delivery_date">Срок поставки</option>
+            <option value="supplier">Поставщик</option>
+          </select>
+          <button id="qAsk">Ответить</button>
+          <span class="sep">|</span>
+          <label>Поставка раньше <input type="date" id="qBefore" value="2026-04-01"></label>
+          <button id="qBeforeBtn">Показать</button>
+        </div>
+        <div id="answer" class="answer" hidden></div>
+      </div>
+
+      <h2>Документы</h2>
+      <div id="documents" class="docs"></div>
+      <div id="unlinked"></div>
+    </div>
+  </section>
+
+  <aside class="right">
+    <div id="evidence" class="evidence" hidden></div>
+    <div class="viewer">
+      <div class="viewer-head">
+        <select id="viewerSelect"><option>— исходный текст —</option></select>
+      </div>
+      <div id="viewerBody" class="viewer-body"><p class="muted">Нажмите «основание» рядом со значением — здесь откроется исходный документ с подсвеченным абзацем.</p></div>
+    </div>
+  </aside>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
